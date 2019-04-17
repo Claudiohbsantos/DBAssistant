@@ -28,9 +28,8 @@ program
 	.action((input,cmd) => {
 		if (program.quiet) {log.quiet()}
 
-		let targets = readJsonBatch(input)
+		input = readJsonBatch(input)
 
-		let input = {args:targets}
 		require(path.resolve(__dirname,'add.js'))(input,config)
 	})
 

@@ -1,0 +1,11 @@
+{
+	"library" : "K:\\Dev\\SilverLibrary\\Mock\\Lib",
+	"user" : "Claudio",
+	"list" : 
+		[
+			{"source": "K:\\Dev\\SilverLibrary\\Mock\\Source\\Dark\\0026_dark atmos 1.wav","subdir" : "Sub" ,"dbs": ["K:\\Dev\\SilverLibrary\\Mock\\DBs\\masterDB.ReaperFileList"]},
+			{"source": "K:\\Dev\\SilverLibrary\\Mock\\Source\\Dark\\0026_dark riser short 1.wav","subdir" : "Sub2" ,"dbs": ["K:\\Dev\\SilverLibrary\\Mock\\DBs\\masterDB.ReaperFileList"]},
+			{"source": "K:\\Dev\\SilverLibrary\\Mock\\Source\\Dark\\0026_dark slam 12.wav","subdir" : "Sub3" ,"dbs": ["K:\\Dev\\SilverLibrary\\Mock\\DBs\\masterDB.ReaperFileList"]},
+			{"source": "K:\\Dev\\SilverLibrary\\Mock\\Source\\Dark","subdir" : "" ,"dbs": ["K:\\Dev\\SilverLibrary\\Mock\\DBs\\masterDB.ReaperFileList"]}
+		]	
+}
