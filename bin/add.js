@@ -29,6 +29,7 @@ function escapeRegExp(text) {
 function addSource(el,user) {
 	log.update.clear()
 	log.info(`Adding ${el.source} to ${el.dbs.length} databases`)
+	log.verbose(`Adding ${el.source} to ${el.dbs}`)
 	if (fs.lstatSync(el.source).isDirectory()) {
 		walkPath(el.source,el.subdir,el.dbs,onGoingWalkers)
 	} else if (fs.lstatSync(el.source).isFile()) {
