@@ -1,9 +1,2 @@
-
-
-{if (true) {
-  var name = 'claudio'
-}
-
-console.log(name)}
-
-console.log(name)
+a = ["K:\\Dev\\SilverLibrary\\Mock\\DBs\\masterDB.ReaperFileList","K:\\Dev\\SilverLibrary\\Mock\\DBs\\Risers.ReaperFilesList"]
+console.log(a.length)

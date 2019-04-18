@@ -34,6 +34,17 @@ program
 	})
 
 program
+	.command('deduplicate')
+	.description('Remove duplicate entries from DB')
+	.action((input) => {
+		if (program.quiet) {log.quiet()}
+		
+		input = readJsonBatch(input)	
+
+		require(path.resolve(__dirname,'deduplicate.js'))(input)
+	})
+
+program
 	.command('test')
 	.description('Test connections to server')
 	.action(() => {
