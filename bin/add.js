@@ -10,14 +10,17 @@ const path = require('path')
 const log = require(path.resolve(__dirname,'..','lib','logger.js'))('add')
 let logInfo = {addedFiles:0}
 let onGoingWalkers = 0
-
+let history
 //////////////////////////////////////////////////
 
-function main(input) {
+function main(input,config) {
+	history = require(path.resolve(__dirname,'..','lib','history.js'))(input.user,config.databases,config.library)
 	lib = new library(input.library)
 	input.list.forEach(el => {
 		addSource(el,input.user)
 	})
+	history.createHeader(logInfo.addedFiles)
+	history.write()
 }
 
 // /////////////////////////////////////////////////
@@ -53,6 +56,7 @@ function addFile(fPath,destFolder,dbs,dontOverwrite) {
 			db = lib.getDB(dbPath)
 			db.add(f)
 		})
+		history.log(f.path,dbs)
 		logInfo.addedFiles++
 		log.update(`${logInfo.addedFiles} files added to databases`)
 	}
