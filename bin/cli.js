@@ -30,7 +30,7 @@ program
 
 		input = readJsonBatch(input)
 
-		require(path.resolve(__dirname,'add.js'))(input,config)
+		require(path.resolve(__dirname,'add.js')).main(input,config)
 	})
 
 program

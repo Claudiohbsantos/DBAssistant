@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-
-module.exports = main
+let add = {}
+module.exports = add
 
 const fs = require('fs')
 const fse = require('fs-extra')
@@ -8,62 +8,56 @@ const walk = require('walk')
 const path = require('path')
 
 const log = require(path.resolve(__dirname,'..','lib','logger.js'))('add')
-let logInfo = {addedFiles:0}
-let onGoingWalkers = 0
-let history
+
+add.logInfo = {addedFiles:0}
 //////////////////////////////////////////////////
 
-function main(input,config) {
-	history = require(path.resolve(__dirname,'..','lib','history.js'))(input.user,config.databases,config.library)
-	lib = new library(input.library)
+
+
+add.main = function(input,config) {
+	add.history = require(path.resolve(__dirname,'..','lib','history.js'))(input.user,config.databases,config.library)
+	
+	lib = new add.library(input.library)
 	input.list.forEach(el => {
-		addSource(el,input.user)
+		add.addSource(el,input.user)
 	})
-	history.createHeader(logInfo.addedFiles)
-	history.write()
 }
 
-// /////////////////////////////////////////////////
+add.exitRoutine = function() {
+	add.history.createHeader(add.logInfo.addedFiles)
+	add.history.write()
+}
+process.on('exit', add.exitRoutine );
 
-function escapeRegExp(text) {
+///////////////////////////////////////////////////
+
+let escapeRegExp = function(text) {
   return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
 }
 
-function addSource(el,user) {
+add.addSource = function(el,user) {
 	log.update.clear()
 	log.info(`Adding ${el.source} to ${el.dbs.length} databases`)
 	log.verbose(`Adding ${el.source} to ${el.dbs}`)
+
+	let cmdOrders = {
+					source : el.source,
+					subdir : el.subdir,
+					dbs    : el.dbs,
+					usertag: el.usertag,
+					rename : el.rename,
+					user   : user,
+					lib    : lib
+					}
+
 	if (fs.lstatSync(el.source).isDirectory()) {
-		walkPath(el.source,el.subdir,el.dbs,onGoingWalkers)
+		walkPath(el.source,add.addFile,cmdOrders)
 	} else if (fs.lstatSync(el.source).isFile()) {
-		let destFolder 
-		if (el.subdir && el.subdir !== '') {
-			destFolder = el.subdir
-			var dontOverwrite = false
-		} else {
-			destFolder = user
-			var dontOverwrite = true
-		}
-		addFile(el.source,destFolder,el.dbs,dontOverwrite)
+		add.addFile(cmdOrders)
 	}
 }
 
-function addFile(fPath,destFolder,dbs,dontOverwrite) {
-	let f = new file(fPath)
-	if (f.isAudio()) {
-		lib.addFile(f,destFolder,dontOverwrite)
-		dbs.forEach(dbPath => {
-			db = lib.getDB(dbPath)
-			db.add(f)
-		})
-		history.log(f.path,dbs)
-		logInfo.addedFiles++
-		log.update(`${logInfo.addedFiles} files added to databases`)
-	}
-}
-
-function walkPath(inputPath,subdir,dbs,onGoingWalkers) {
-	// onGoingWalkers++
+function walkPath(inputPath,fileFunc,cmdOrders) {
 	options = {
 		followLinks: false, 
 		filters: ["peaks"]
@@ -72,10 +66,12 @@ function walkPath(inputPath,subdir,dbs,onGoingWalkers) {
 	walker = walk.walk(inputPath,options)
 	
 	walker.on("file", function (root, fileStats, next) {
-		let relativeDir = root.substring(path.parse(inputPath).dir.length+1)
 		let filePath = path.join(root,fileStats.name)
-		let destFolder =  path.join(subdir,relativeDir)
-		addFile(filePath,destFolder,dbs)
+		let relativeDir = root.substring(path.parse(inputPath).dir.length+1)
+		let newOrders = Object.assign({},cmdOrders)
+		newOrders.source = filePath
+		newOrders.subdir = path.join(newOrders.subdir,relativeDir)
+		fileFunc(newOrders)
 		next();
 	});
 
@@ -84,58 +80,82 @@ function walkPath(inputPath,subdir,dbs,onGoingWalkers) {
 	});
 
 	walker.on("end", function () {
-		// onGoingWalkers[0]--
+		// add.state = {walkFinished: true}
 	});
 }
 
- 
+function getDestPath(cmd) {
+	let cleanSubdir =  new RegExp('^' + escapeRegExp(cmd.lib.path) + '(.+)','i')
+	cmd.subdir = cmd.subdir.match(cleanSubdir) ?  cmd.subdir.match(cleanSubdir)[1] : cmd.subdir
+	let nonEmpty = /[\w\d]/
+	let folder = nonEmpty.test(cmd.subdir) ? cmd.subdir : cmd.user
+	let base =  nonEmpty.test(cmd.rename) ? (cmd.rename + path.parse(cmd.source).ext) : path.parse(cmd.source).base
+	let destPath = path.join(cmd.lib.path,folder, base)
+	if (!nonEmpty.test(cmd.subdir)) {destPath = getUniquePath(destPath)} 
+	return destPath
+}
 
-// /////////////////////////////////////////////////
+add.addFile = function(cmd) {
+	let f = new add.file(cmd.source)
+	if (f.isAudio()) {
+		let destPath = getDestPath(cmd)
+		cmd.lib.addFile(f,destPath)
+		cmd.dbs.forEach(dbPath => {
+			db = cmd.lib.getDB(dbPath)
+			db.add(f,cmd.usertag)
+		})
 
-class library {
+		add.history.log(f.path,cmd.dbs)
+		add.logInfo.addedFiles++
+		log.update(`${add.logInfo.addedFiles} files added to databases`)
+		// if (add.state.walkFinished && add.state.added)
+	}
+}
+
+function getUniquePath(filePath) {
+	let pathObj = path.parse(filePath)
+	let suffix = 0
+
+	function tryNewName(newName) {
+		if (fs.existsSync(newName)) {
+			suffix++
+			return tryNewName(path.join(pathObj.dir,pathObj.name+'_'+suffix+pathObj.ext))
+		} else {
+			return newName
+		}
+	}
+
+	return tryNewName(path.format(pathObj))
+}
+
+add.library = class {
 	constructor(path) {
 		this.path = path
 		this.dbList = {}
 	}
 
-	addFile(file,destFolder,dontOverwrite) {
+	addFile(file,destPath) {
 		if (!this.isInLibrary(file)) {
-			let newPath = path.join(this.path,destFolder,path.parse(file.path).base)
-			newPath = (dontOverwrite ? this.getUniquePath(newPath) : newPath)
-			fse.copySync(file.path,newPath)
-			file.path = newPath
+			fse.copySync(file.path,destPath)
+			file.path = destPath
 		}
 	}
 
 	isInLibrary(file) {
-		let isInLib = new RegExp('^'+escapeRegExp(this.path),'i')
+		let isInLib = new RegExp('^' + escapeRegExp(this.path),'i')
 		return isInLib.test(file.path)
-	}
-
-	getUniquePath(filePath) {
-		let pathObj = path.parse(filePath)
-		let suffix = 0
-		function tryNewName(newName) {
-			if (fs.existsSync(newName)) {
-				suffix++
-				return tryNewName(path.join(pathObj.dir,pathObj.name+'_'+suffix+pathObj.ext))
-			} else {
-				return newName
-			}
-		}
-		return tryNewName(path.format(pathObj))
 	}
 
 	getDB(dbPath) {
 		if (!this.dbList[dbPath]) {
-			this.dbList[dbPath] = new reaperDB(dbPath)
+			this.dbList[dbPath] = new add.reaperDB(dbPath)
 			this.dbList[dbPath].open()
 		}
 		return this.dbList[dbPath]
 	}
 }
 
-class reaperDB {
+add.reaperDB = class {
 	constructor (path) {
 		this.path = path
 		this.stillWriting = 0
@@ -146,8 +166,8 @@ class reaperDB {
 		this.stream = fs.createWriteStream(this.path,{flags:'a'})
 	}
 
-	add(file) {
-		if (this.stream) {this.stillWriting++ ; this.stream.write(file.dbEntry+'\n',() => {this.stillWriting--})}
+	add(file,usertag) {
+		if (this.stream) {this.stillWriting++ ; this.stream.write(this.dbEntry(file,usertag)+'\n',() => {this.stillWriting--})}
 	}
 
 	close() {
@@ -157,9 +177,17 @@ class reaperDB {
 			if (this.stream) {this.stream.end()}
 		}
 	}
+
+	dbEntry(file,usertag) {
+		let entryString = `FILE "${file.path}" ${file.file_size_low32} ${file.file_size_hi32} ${file.file_date_sec_since_1970}`
+		if (usertag || file.description) {
+			entryString += "\nDATA " + (usertag ? `"u:${usertag}" ` : '') + (file.description ? `"d:${file.description}" ` : '')
+		}
+		return entryString
+	}
 }
 
-class file {
+add.file = class {
 	constructor(path) {
 		this.path = path
 		if (this.isAudio()) {this.getStats()}
@@ -170,6 +198,7 @@ class file {
 	}
 
 	isAudio() {
+		if (!fs.existsSync(this.path)) {return false}
 		return (this.ext == '.wav' || this.ext == '.aiff' || this.ext == '.mp3')
 	}
 
@@ -178,13 +207,5 @@ class file {
 		this.file_size_low32 = stat.size;
 		this.file_size_hi32 = 0;
 		this.file_date_sec_since_1970 = Math.floor(stat.mtimeMs / 1000)
-	}
-
-	get dbEntry() {
-		let entryString = `FILE "${this.path}" ${this.file_size_low32} ${this.file_size_hi32} ${this.file_date_sec_since_1970}`
-		if (this.usertag || this.description) {
-			entryString += "\nDATA " + (this.usertag ? `"u:${this.usertag}" ` : '') + (this.description ? `"d:${this.description}" ` : '')
-		}
-		return entryString
 	}
 }
