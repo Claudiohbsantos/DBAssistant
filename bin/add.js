@@ -25,8 +25,10 @@ add.main = function(input,config) {
 }
 
 add.exitRoutine = function() {
-	add.history.createHeader(add.logInfo.addedFiles)
-	add.history.write()
+	if (add.history) {
+		add.history.createHeader(add.logInfo.addedFiles)
+		add.history.write()
+	}
 }
 process.on('exit', add.exitRoutine );
 
