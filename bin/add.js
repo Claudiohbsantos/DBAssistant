@@ -161,7 +161,11 @@ add.reaperDB = class {
 	}
 
 	open() {  
-		// TODO verify writable
+		try{fs.accessSync(config.databases, fs.constants.W_OK)}
+		catch(err) {
+			log.error(`DBAssistant can't write to DB file: ${this.path}`)
+			process.exit()
+		}
 		this.stream = fs.createWriteStream(this.path,{flags:'a'})
 	}
 
