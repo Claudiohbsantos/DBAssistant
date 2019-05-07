@@ -5,6 +5,7 @@ const program = require('commander');
 const path = require('path'); 
 
 const log = require(path.resolve(__dirname,'..','lib','logger.js'))('cli')
+log.registerExceptionHandler()
 log.verbose(`cli input: ${process.argv.slice(2)}`)
 
 var config;
