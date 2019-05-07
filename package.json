@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "byline": "^5.0.0",
     "chai": "^4.2.0",
     "commander": "^2.19.0",
     "fs-extra": "^7.0.1",

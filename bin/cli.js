@@ -45,6 +45,17 @@ program
 	})
 
 program
+	.command('export')
+	.description('Export DBs')
+	.action((input) => {
+		if (program.quiet) {log.quiet()}
+		
+		input = readJsonBatch(input)	
+
+		require(path.resolve(__dirname,'export.js')).main(input)
+	})
+
+program
 	.command('test')
 	.description('Test connections to server')
 	.action(() => {

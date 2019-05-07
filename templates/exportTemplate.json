@@ -1,0 +1,9 @@
+{
+	"newLib": "u:\\Samples",
+	"currentLib": "K:\\Dev\\SilverLibrary\\Mock\\Lib",
+	"destination": "K:\\Dev\\SilverLibrary\\Mock\\Portable",
+	"dbList" : [
+		{"name": "DB With Spaces" , "ref" : "K:\\Dev\\SilverLibrary\\Mock\\DBs\\db with spaces.ReaperFileList"},
+		{"name": "SilverDB" , "ref" : "K:\\Dev\\SilverLibrary\\Mock\\DBs\\SilverDB.ReaperFileList"}
+	]
+}
