@@ -6,6 +6,7 @@ const fs = require('fs')
 const fse = require('fs-extra')
 const walk = require('walk')
 const path = require('path')
+const mediainfoExec =  require('mediainfo-parser').exec
 
 const log = require(path.resolve(__dirname,'..','lib','logger.js'))('add')
 
@@ -96,8 +97,7 @@ function getDestPath(cmd) {
 }
 
 add.addFile = function(cmd) {
-	let f = new add.file(cmd.source)
-	if (f.isAudio()) {
+	let f = new add.file(cmd.source,() => {
 		let destPath = getDestPath(cmd)
 		cmd.lib.addFile(f,destPath)
 		cmd.dbs.forEach(dbPath => {
@@ -108,8 +108,7 @@ add.addFile = function(cmd) {
 		add.history.log(f.path,cmd.dbs)
 		add.logInfo.addedFiles++
 		log.update(`${add.logInfo.addedFiles} files added to databases`)
-		// if (add.state.walkFinished && add.state.added)
-	}
+	})
 }
 
 function getUniquePath(filePath) {
@@ -188,9 +187,12 @@ add.reaperDB = class {
 }
 
 add.file = class {
-	constructor(path) {
+	constructor(path,callback) {
 		this.path = path
-		if (this.isAudio()) {this.getStats()}
+		if (this.isAudio()) {
+			this.getStats()
+			this.getBWF(callback)
+		}
 	}
 
 	get ext() {
@@ -207,5 +209,15 @@ add.file = class {
 		this.file_size_low32 = stat.size;
 		this.file_size_hi32 = 0;
 		this.file_date_sec_since_1970 = Math.floor(stat.mtimeMs / 1000)
+	}
+
+	getBWF(callback) {
+		// TODO check whether mediainfo needs to be in PATH 
+		mediainfoExec(this.path, (err, obj) => {
+			if (obj.file && obj.file.track && obj.file.track[0].description) {
+				this.description = obj.file.track[0].description
+			}
+			callback()
+		  })
 	}
 }
