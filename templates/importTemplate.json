@@ -1,16 +1,15 @@
 {
 	"library" : "K:\\Dev\\SilverLibrary\\Mock\\Lib",
 	"user" : "Claudio",
-	"shouldCopyToLib" : "true",
+	"shouldCopyToLib" : true,
 	"list" : 
 		[
 			{
-				"source": "K:\\Dev\\SilverLibrary\\Mock\\Source\\Dark\\0026_dark atmos 4.wav",
-				"subdir": "Macho Folder\\MachoDub",
+				"source": "K:\\Dev\\SilverLibrary\\Mock\\Source\\0026_bell riser.wav",
+				"subdir": "K:\\Dev\\SilverLibrary\\Mock\\Lib\\Macho Folder\\Footsies",
 				"rename": "NewNameBoss",
 				"usertag": "My Tag",
 				"dbs": ["K:\\Dev\\SilverLibrary\\Mock\\DBs\\SilverDB.ReaperFileList","K:\\Dev\\SilverLibrary\\Mock\\DBs\\db with spaces.ReaperFileList"]
-			}
-				
+			}		
 		]	
 }
