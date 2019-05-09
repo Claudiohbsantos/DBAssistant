@@ -104,8 +104,15 @@ function getDestPath(cmd) {
 		base = path.parse(cmd.source).base
 	}
 	
-	let destPath = path.join(cmd.lib.path,folder, base)
+	let destPath
+	if (path.parse(cmd.subdir).root) {
+		destPath = path.join(folder, base)
+	} else {
+		destPath = path.join(cmd.lib.path,folder, base)
+	}
+
 	if (!nonEmpty.test(cmd.subdir)) {destPath = getUniquePath(destPath)} 
+	
 	return destPath
 }
 
