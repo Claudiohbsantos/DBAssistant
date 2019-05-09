@@ -163,8 +163,9 @@ add.reaperDB = class {
 		this.stillWriting = 0
 	}
 
-	open() {  
-		try{fs.accessSync(config.databases, fs.constants.W_OK)}
+	open() {
+		// FIXME files have already been copied by the time this test is done
+		try{fs.accessSync(this.path, fs.constants.W_OK)}
 		catch(err) {
 			log.error(`DBAssistant can't write to DB file: ${this.path}`)
 			process.exit()
