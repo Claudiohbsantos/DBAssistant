@@ -20,7 +20,7 @@ add.main = function(input,config) {
 	
 	lib = new add.library(input.library)
 	input.list.forEach(el => {
-		add.addSource(el,input.user)
+		add.addSource(el,input.user,input.shouldCopyToLib)
 	})
 }
 
@@ -38,19 +38,20 @@ let escapeRegExp = function(text) {
   return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
 }
 
-add.addSource = function(el,user) {
+add.addSource = function(el,user,shouldCopyToLib) {
 	log.update.clear()
 	log.info(`Adding ${el.source} to ${el.dbs.length} databases`)
 	log.verbose(`Adding ${el.source} to ${el.dbs}`)
 
 	let cmdOrders = {
-					source : el.source,
-					subdir : el.subdir,
-					dbs    : el.dbs,
-					usertag: el.usertag,
-					rename : el.rename,
-					user   : user,
-					lib    : lib
+					source         : el.source,
+					subdir         : el.subdir,
+					dbs            : el.dbs,
+					usertag        : el.usertag,
+					rename         : el.rename,
+					user           : user,
+					lib            : lib,
+					shouldCopyToLib: shouldCopyToLib
 					}
 
 	if (fs.lstatSync(el.source).isDirectory()) {
@@ -101,7 +102,7 @@ function getDestPath(cmd) {
 add.addFile = function(cmd) {
 	let f = new add.file(cmd.source,() => {
 		let destPath = getDestPath(cmd)
-		cmd.lib.addFile(f,destPath)
+		cmd.lib.addFile(f,destPath,cmd.shouldCopyToLib)
 		cmd.dbs.forEach(dbPath => {
 			db = cmd.lib.getDB(dbPath)
 			db.add(f,cmd.usertag)
@@ -135,8 +136,8 @@ add.library = class {
 		this.dbList = {}
 	}
 
-	addFile(file,destPath) {
-		if (!this.isInLibrary(file)) {
+	addFile(file,destPath,shouldCopyToLib) {
+		if (!this.isInLibrary(file) && shouldCopyToLib) {
 			fse.copySync(file.path,destPath)
 			file.path = destPath
 		}
