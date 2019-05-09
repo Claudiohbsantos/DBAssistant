@@ -11,6 +11,7 @@ const mediainfoExec =  require('mediainfo-parser').exec
 const log = require(path.resolve(__dirname,'..','lib','logger.js'))('add')
 
 add.logInfo = {addedFiles:0}
+let renamed = 0
 //////////////////////////////////////////////////
 
 
@@ -94,7 +95,15 @@ function getDestPath(cmd) {
 	cmd.subdir = cmd.subdir.match(cleanSubdir) ?  cmd.subdir.match(cleanSubdir)[1] : cmd.subdir
 	let nonEmpty = /[\w\d]/
 	let folder = nonEmpty.test(cmd.subdir) ? cmd.subdir : cmd.user
-	let base =  nonEmpty.test(cmd.rename) ? (cmd.rename + path.parse(cmd.source).ext) : path.parse(cmd.source).base
+
+	let base
+	if (nonEmpty.test(cmd.rename)) {
+		renamed++ 
+		base = cmd.rename + `_${renamed}` + path.parse(cmd.source).ext 
+	} else {
+		base = path.parse(cmd.source).base
+	}
+	
 	let destPath = path.join(cmd.lib.path,folder, base)
 	if (!nonEmpty.test(cmd.subdir)) {destPath = getUniquePath(destPath)} 
 	return destPath
