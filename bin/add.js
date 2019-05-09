@@ -55,6 +55,7 @@ add.addSource = function(el,user,shouldCopyToLib) {
 					}
 
 	if (fs.lstatSync(el.source).isDirectory()) {
+		cmdOrders.rename = ''
 		walkPath(el.source,add.addFile,cmdOrders)
 	} else if (fs.lstatSync(el.source).isFile()) {
 		add.addFile(cmdOrders)
