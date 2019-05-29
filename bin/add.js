@@ -111,8 +111,8 @@ function getDestPath(cmd) {
 
 	let base
 	if (nonEmpty.test(cmd.rename)) {
+		base = cmd.rename + (renamed > 0 ? `_${renamed}` : '') + path.parse(cmd.source).ext 
 		renamed++ 
-		base = cmd.rename + `_${renamed}` + path.parse(cmd.source).ext 
 	} else {
 		base = path.parse(cmd.source).base
 	}
