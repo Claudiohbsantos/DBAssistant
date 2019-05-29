@@ -1,6 +1,6 @@
 {
   "name": "dbassistant",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "",
   "main": ".\\bin\\cli.js",
   "bin": ".\\bin\\cli.js",
@@ -13,6 +13,7 @@
   "dependencies": {
     "byline": "^5.0.0",
     "chai": "^4.2.0",
+    "command-exists": "^1.2.8",
     "commander": "^2.19.0",
     "fs-extra": "^7.0.1",
     "listr": "^0.14.3",
