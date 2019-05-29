@@ -10,7 +10,7 @@ log.verbose(`cli input: ${process.argv.slice(2)}`)
 
 var config;
 try { 
-	if (process.pkg) {
+	if (process.pkg) { // if running from compiled executable
 		config = require(path.resolve(path.dirname(process.execPath),'config.json'))
 	} else {
 		config = require(path.resolve(__dirname,'..','..','config.json'))	

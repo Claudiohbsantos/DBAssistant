@@ -7,6 +7,7 @@ const fse = require('fs-extra')
 const walk = require('walk')
 const path = require('path')
 const mediainfoExec =  require('mediainfo-parser').exec
+const command_exists = require('command-exists').sync
 
 const log = require(path.resolve(__dirname,'..','lib','logger.js'))('add')
 
@@ -17,12 +18,24 @@ let renamed = 0
 
 
 add.main = function(input,config) {
+	add.init()
 	add.history = require(path.resolve(__dirname,'..','lib','history.js'))(input.user,config.databases,config.library)
 	
 	lib = new add.library(input.library)
 	input.list.forEach(el => {
 		add.addSource(el,input.user,input.shouldCopyToLib)
 	})
+}
+
+add.init = function() {
+	// TODO conditional for different paths if windows or mac
+	if (!command_exists('mediainfo')) {
+		if (process.pkg) { // if running from compiled executable
+			process.env.PATH = process.env.PATH + ';' + path.resolve(path.dirname(process.execPath),'3rdParty\\MediaInfo_CLI_win')
+		} else {
+			process.env.PATH = process.env.PATH + ';' + path.resolve(__dirname,'..','3rdParty\\MediaInfo_CLI_win')
+		}
+	}
 }
 
 add.exitRoutine = function() {
@@ -237,7 +250,6 @@ add.file = class {
 	}
 
 	getBWF(callback) {
-		// TODO check whether mediainfo needs to be in PATH 
 		mediainfoExec(this.path, (err, obj) => {
 			if (obj.file && obj.file.track && obj.file.track[0].description) {
 				this.description = obj.file.track[0].description
