@@ -19,6 +19,7 @@ let renamed = 0
 
 
 add.main = function(input,config) {
+	log.info('DBAssistant: Adding files to Databases')
 	add.history = require(path.resolve(__dirname,'..','lib','history.js'))(input.user,config.databases,config.library)
 	
 	lib = new add.library(input.library)
@@ -32,6 +33,9 @@ add.exitRoutine = function() {
 		add.history.createHeader(add.logInfo.addedFiles)
 		add.history.write()
 	}
+	log.update.done()
+	log.info(`history file added to ${add.history.filePath}`)
+	log.info(`DBAssistant is exiting`)
 }
 process.on('exit', add.exitRoutine );
 
@@ -157,6 +161,8 @@ add.library = class {
 
 	addFile(file,destPath,shouldCopyToLib) {
 		if (!this.isInLibrary(file) && shouldCopyToLib) {
+			log.verbose(`Copying ${file.path} to ${destPath}`)
+			// TODO Make async
 			fse.copySync(file.path,destPath)
 			file.path = destPath
 		}
@@ -193,6 +199,8 @@ add.reaperDB = class {
 	}
 
 	add(file,usertag,user) {
+		log.verbose(`adding ${file.path} to ${this.path}`)
+		log.verbose(`${this.dbEntry(file,usertag,user)}`)
 		if (this.stream) {this.stillWriting++ ; this.stream.write(this.dbEntry(file,usertag,user)+'\n',() => {this.stillWriting--})}
 	}
 
@@ -238,6 +246,7 @@ add.file = class {
 	}
 
 	getStats() {
+		log.verbose(`getting ${this.path} stats`)
 		let stat = fs.statSync(this.path)
 		this.file_size_low32 = stat.size;
 		this.file_size_hi32 = 0;
