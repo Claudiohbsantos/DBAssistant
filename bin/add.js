@@ -6,10 +6,11 @@ const fs = require('fs')
 const fse = require('fs-extra')
 const walk = require('walk')
 const path = require('path')
-const mediainfoExec =  require('mediainfo-parser').exec
-const command_exists = require('command-exists').sync
 
 const log = require(path.resolve(__dirname,'..','lib','logger.js'))('add')
+
+const getWavMetadata = require(path.resolve(__dirname,'..','lib','getWavMetadata.js'))
+const getTaggedMetadata = require(path.resolve(__dirname,'..','lib','getTaggedMetadata.js'))
 
 add.logInfo = {addedFiles:0}
 let renamed = 0
@@ -18,24 +19,12 @@ let renamed = 0
 
 
 add.main = function(input,config) {
-	add.init()
 	add.history = require(path.resolve(__dirname,'..','lib','history.js'))(input.user,config.databases,config.library)
 	
 	lib = new add.library(input.library)
 	input.list.forEach(el => {
 		add.addSource(el,input.user,input.shouldCopyToLib)
 	})
-}
-
-add.init = function() {
-	// TODO conditional for different paths if windows or mac
-	if (!command_exists('mediainfo')) {
-		if (process.pkg) { // if running from compiled executable
-			process.env.PATH = process.env.PATH + ';' + path.resolve(path.dirname(process.execPath),'3rdParty\\MediaInfo_CLI_win')
-		} else {
-			process.env.PATH = process.env.PATH + ';' + path.resolve(__dirname,'..','3rdParty\\MediaInfo_CLI_win')
-		}
-	}
 }
 
 add.exitRoutine = function() {
@@ -135,7 +124,7 @@ add.addFile = function(cmd) {
 		cmd.lib.addFile(f,destPath,cmd.shouldCopyToLib)
 		cmd.dbs.forEach(dbPath => {
 			db = cmd.lib.getDB(dbPath)
-			db.add(f,cmd.usertag)
+			db.add(f,cmd.usertag,cmd.user)
 		})
 
 		add.history.log(f.path,cmd.dbs)
@@ -203,8 +192,8 @@ add.reaperDB = class {
 		this.stream = fs.createWriteStream(this.path,{flags:'a'})
 	}
 
-	add(file,usertag) {
-		if (this.stream) {this.stillWriting++ ; this.stream.write(this.dbEntry(file,usertag)+'\n',() => {this.stillWriting--})}
+	add(file,usertag,user) {
+		if (this.stream) {this.stillWriting++ ; this.stream.write(this.dbEntry(file,usertag,user)+'\n',() => {this.stillWriting--})}
 	}
 
 	close() {
@@ -215,12 +204,18 @@ add.reaperDB = class {
 		}
 	}
 
-	dbEntry(file,usertag) {
-		let entryString = `FILE "${file.path}" ${file.file_size_low32} ${file.file_size_hi32} ${file.file_date_sec_since_1970}`
-		if (usertag || file.description) {
-			entryString += "\nDATA " + (usertag ? `"u:${usertag}" ` : '') + (file.description ? `"d:${file.description}" ` : '')
-		}
-		return entryString
+	dbEntry(file,usertag,user) {
+		let entryString = [`FILE "${file.path}" ${file.file_size_low32} ${file.file_size_hi32} ${file.file_date_sec_since_1970}`]
+			entryString.push("\nDATA")
+			entryString.push(` "u:${usertag}"`)
+			entryString.push(` "t:${file.title}"`)
+			entryString.push(` "d:${file.description}"`)
+			entryString.push(` "a:${file.artist}"`)
+			entryString.push(` "b:${file.album}"`)
+			entryString.push(` "y:${file.year}"`)
+			entryString.push(` "g:${file.genre}"`)
+			entryString.push(` "c:${user}"`)
+		return entryString.join('')
 	}
 }
 
@@ -250,11 +245,22 @@ add.file = class {
 	}
 
 	getBWF(callback) {
-		mediainfoExec(this.path, (err, obj) => {
-			if (obj.file && obj.file.track && obj.file.track[0].description) {
-				this.description = obj.file.track[0].description
-			}
-			callback()
-		  })
+		fs.readFile(this.path,(err,buff) => {
+			if (err) {log.error(`failed to read ${this.path} for metadata extraction`); return}
+			let wavMeta
+			if (/\.wav/i.test(this.path)) {wavMeta = getWavMetadata(buff,this.path)}
+		
+			let tagMeta = getTaggedMetadata(buff,this.path)
+		
+			Promise.all([wavMeta,tagMeta])
+				.then(values => {
+					let metadata = Object.assign({},values[1],values[0])
+					Object.assign(this,metadata)
+					callback()
+				})
+				.catch(err => {
+					log.error(`failed to parse metadata from ${this.path}`)
+				})
+		})
 	}
 }
