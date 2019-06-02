@@ -242,7 +242,8 @@ add.file = class {
 
 	isAudio() {
 		if (!fs.existsSync(this.path)) {return false}
-		return (this.ext == '.wav' || this.ext == '.aiff' || this.ext == '.mp3')
+		let validExtensions = ['.wav','.aiff','.aif','.mp3','.ogg','.wv','.flac']
+		return validExtensions.includes(this.ext)
 	}
 
 	getStats() {
