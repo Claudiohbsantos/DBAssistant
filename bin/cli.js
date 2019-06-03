@@ -8,16 +8,6 @@ const log = require(path.resolve(__dirname,'..','lib','logger.js'))('cli')
 log.registerExceptionHandler()
 log.verbose(`cli input: ${process.argv.slice(2)}`)
 
-var config;
-try { 
-	if (process.pkg) { // if running from compiled executable
-		config = require(path.resolve(path.dirname(process.execPath),'config.json'))
-	} else {
-		config = require(path.resolve(__dirname,'..','config.json'))	
-	}
-}
-catch(err) {if (err.code == 'MODULE_NOT_FOUND') {log.error('config file not found');process.exit()}}
-
 program
 	.version(require(path.resolve(__dirname,'..','package.json')).version)
 	.option('-q, --quiet','Supress all console prints ')
