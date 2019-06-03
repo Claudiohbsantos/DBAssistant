@@ -13,7 +13,7 @@ try {
 	if (process.pkg) { // if running from compiled executable
 		config = require(path.resolve(path.dirname(process.execPath),'config.json'))
 	} else {
-		config = require(path.resolve(__dirname,'..','..','config.json'))	
+		config = require(path.resolve(__dirname,'..','config.json'))	
 	}
 }
 catch(err) {if (err.code == 'MODULE_NOT_FOUND') {log.error('config file not found');process.exit()}}
