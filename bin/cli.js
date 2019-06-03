@@ -14,7 +14,7 @@ program
 
 program	
 	.command('add')
-	.description('Add files/folders to SilverDB')
+	.description('Add files/folders to Reaper Databases')
 	.arguments('<JSON>')
 	.action((input,cmd) => {
 		if (program.quiet) {log.quiet()}
