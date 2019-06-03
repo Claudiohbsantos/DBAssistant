@@ -18,9 +18,9 @@ let renamed = 0
 
 
 
-add.main = function(input,config) {
+add.main = function(input) {
 	log.info('DBAssistant: Adding files to Databases')
-	add.history = require(path.resolve(__dirname,'..','lib','history.js'))(input.user,config.databases,config.library)
+	add.history = require(path.resolve(__dirname,'..','lib','history.js'))(input.user,input.library)
 	
 	lib = new add.library(input.library)
 	input.list.forEach(el => {

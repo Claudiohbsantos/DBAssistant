@@ -21,7 +21,7 @@ program
 
 		input = readJsonBatch(input)
 
-		require(path.resolve(__dirname,'add.js')).main(input,config)
+		require(path.resolve(__dirname,'add.js')).main(input)
 	})
 
 program
@@ -44,14 +44,6 @@ program
 		input = readJsonBatch(input)	
 
 		require(path.resolve(__dirname,'export.js')).main(input)
-	})
-
-program
-	.command('test')
-	.description('Test connections to server')
-	.action(() => {
-		if (program.quiet) {log.quiet}
-			require(path.resolve(__dirname,'test.js'))()
 	})
 
 program.parse(process.argv)
