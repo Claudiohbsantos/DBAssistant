@@ -1,0 +1,7 @@
+{
+  "databases": "Path/to/default/databases/directory",
+  "dbAssistant": "Path/to/dbassistant/executable",
+  "library": "Path/to/directory/to/be/used/as/media/library",
+  "masterDB": "Path/to/db/file/to/be/used/as/master.ReaperFileList",
+  "users": ["Array","of","valid","users"]
+}
