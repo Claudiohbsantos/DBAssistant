@@ -5,7 +5,7 @@
   "main": ".\\bin\\cli.js",
   "bin": ".\\bin\\cli.js",
   "scripts": {
-    "build": "pkg --out-path ../release_dbassistant -t node10-win-x64 package.json"
+    "build": "pkg --out-path ..\\release_dbassistant -t node10-win-x64 package.json && copy changelog.md ..\\release_dbassistant\\changelog.md"
   },
   "author": "",
   "license": "ISC",
