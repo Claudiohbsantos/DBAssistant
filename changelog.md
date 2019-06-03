@@ -11,7 +11,3 @@
     - .ogg, .flac, .aif and .wv formats are now recognized
     - Avoid newlines on verbose logging
     - More steps are logged to file
-
-## ROADMAP
-
-    - Feature:Mac Compatibility
