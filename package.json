@@ -1,6 +1,6 @@
 {
   "name": "dbassistant",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "",
   "main": ".\\bin\\cli.js",
   "bin": ".\\bin\\cli.js",
