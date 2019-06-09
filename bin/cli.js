@@ -64,28 +64,22 @@ program
 			}
 			if (typeof cmd.name === 'string') {exportParams.dbList[0].name = cmd.name}
 		}
-
-		require(path.resolve(__dirname,'export.js')).main(input)
+		
+		require(path.resolve(__dirname,'export.js')).main(exportParams)
 	})
 
 program.parse(process.argv)
 
-//
-
-function validatePath(p) {
-	if (!fs.existsSync(p)) {
-		log.error(`${p} is not a valid path`)
-		process.exit()
-	} else {
-		return p
-	} 
-}
-
 function readJsonBatch(file) {
+	if ( !/\.json/i.test(path.extname(file) )) {
+		log.error(`File ${file} doesn't seem to be a json file`)
+		process.exit(1)
+	}
 	if (!fs.existsSync(file)) {
-		log.error(`Filelist ${file} doesn't seem to exist`)
+		log.error(`File ${file} doesn't seem to exist`)
 		process.exit(1)
 	} else {
+		//TODO check if is valid json
 		return require(file)
 	}
 }
