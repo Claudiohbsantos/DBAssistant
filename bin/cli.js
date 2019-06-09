@@ -76,6 +76,26 @@ program
 		require(path.resolve(__dirname,'export.js')).main(exportParams)
 	})
 
+program
+	.command('templates')
+	.description('Create sample files with examples of JSON commands for DBAssistant')
+	.action(() => {
+		let templatesDir
+		if (process.pkg) { // if running from compiled executable
+			templatesDir = path.resolve(path.dirname(process.execPath),'templates')
+		} else {
+			templatesDir = path.resolve(__dirname,'..','test','templates_integration','templates')
+		}
+
+		if (!fs.existsSync(templatesDir)){
+		    fs.mkdirSync(templatesDir);
+		}
+
+		fse.copySync(path.resolve(__dirname,'..','templates','deduplicateTemplate.json'),path.join(templatesDir,'deduplicateTemplate.json'))
+		fse.copySync(path.resolve(__dirname,'..','templates','exportTemplate.json'),path.join(templatesDir,'exportTemplate.json'))
+		fse.copySync(path.resolve(__dirname,'..','templates','importTemplate.json'),path.join(templatesDir,'importTemplate.json'))
+	})
+
 program.parse(process.argv)
 
 function readJsonBatch(file) {
