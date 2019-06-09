@@ -11,6 +11,11 @@ const log = require(path.resolve(__dirname,'..','lib','logger.js'))('export')
 var nDBExported = 0
 var dbTotal
 x.main = function (input) {
+    if (!input.dbList) {
+        log.error('missing input')
+        process.exit(1)
+    }  
+
     dbTotal = input.dbList.length
     log.info(`remapping ${input.currentLib} to ${input.newLib}`)
     let dbmjson = []
