@@ -27,19 +27,26 @@ program
 program
 	.command('deduplicate')
 	.description('Remove duplicate entries from DB')
-	.action((input) => {
+	.option('-m, --manual',"Manual mode. ")
+	.arguments("<JSON|DBs...>")
+	.action((input,cmd) => {
 		if (program.quiet) {log.quiet()}
-		
-		input = readJsonBatch(input)	
 
-		require(path.resolve(__dirname,'deduplicate.js'))(input)
+		let dedupParams = []
+		if (!cmd.manual) {
+			dedupParams = readJsonBatch(path.resolve(input[0]))
+		} else {
+			input.forEach(db => {dedupParams.push(path.resolve(db))})
+		}
+
+		require(path.resolve(__dirname,'deduplicate.js'))(dedupParams)
 	})
 
 program
 	.command('export')
 	.description('Export DBs')
 	.option('-m, --manual','Manual mode. Last arguments should be Database path')
-	.option('-l, --newLibrary <string>','New library path')
+	.option('-l, --newLibrary <string>','New library path (will replace currentLib in DBs)')
 	.option('-c, --currentLib <string>','Current Library Path to be replaced')
 	.option('-d, --destination <string>', 'Destination in which to save new db files ')
 	.option('-n, --name <string>','Shortcut name')
@@ -49,6 +56,7 @@ program
 		
 		input = path.resolve(input)
 
+		let exportParams
 		if (!cmd.manual) {
 			exportParams = readJsonBatch(input)	
 		} else {
