@@ -6,6 +6,10 @@ const path = require('path')
 const log = require(path.resolve(__dirname,'..','lib','logger.js'))('deduplicate')
 
 function main(dbs) {
+	if (!dbs) {
+		log.error('missing deduplicate dbs list')
+		process.exit(1)
+	}
 	dbs.forEach(db => {
 		let parsedDB = parseFilesEliminatingDuplicates(db)
 		rewriteDB(db,parsedDB)
