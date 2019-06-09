@@ -189,11 +189,8 @@ add.reaperDB = class {
 	}
 
 	open() {
-		// FIXME files have already been copied by the time this test is done
-		try{fs.accessSync(this.path, fs.constants.W_OK)}
-		catch(err) {
-			log.error(`DBAssistant can't write to DB file: ${this.path}`)
-			process.exit()
+		if (!fs.existsSync(this.path)) {
+			log.warn(`Database doesn't exist. Creating ${this.path}`)
 		}
 		this.stream = fs.createWriteStream(this.path,{flags:'a'})
 	}
