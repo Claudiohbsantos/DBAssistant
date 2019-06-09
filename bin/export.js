@@ -16,7 +16,8 @@ x.main = function (input) {
     let dbmjson = []
     input.dbList.forEach((db) => {
         let newRef = x.copyDBReplacingLib(db.ref,input.currentLib,input.newLib,input.destination)
-        dbmjson.push({ name:db.name,ref:newRef})
+        let shortcutName = db.name ? db.name : path.parse(db.ref).name
+        dbmjson.push({ name:shortcutName,ref:newRef})
     })
     log.update.done()
     x.writeDBMJson(dbmjson,input.destination)  
