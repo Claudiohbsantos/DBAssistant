@@ -47,6 +47,10 @@ let escapeRegExp = function(text) {
 
 add.addSource = function(el,user,shouldCopyToLib) {
 	log.update.clear()
+
+	if (!fs.existsSync(el.source)) {
+		log.error(`${el.source} doesn't seem to exist`)
+	} else {
 	log.info(`Adding ${el.source} to ${el.dbs.length} databases`)
 	log.verbose(`Adding ${el.source} to ${el.dbs}`)
 
