@@ -38,10 +38,32 @@ program
 program
 	.command('export')
 	.description('Export DBs')
-	.action((input) => {
+	.option('-m, --manual','Manual mode. Last arguments should be Database path')
+	.option('-l, --newLibrary <string>','New library path')
+	.option('-c, --currentLib <string>','Current Library Path to be replaced')
+	.option('-d, --destination <string>', 'Destination in which to save new db files ')
+	.option('-n, --name <string>','Shortcut name')
+	.arguments('<JSON|DBPath(manual)>')
+	.action((input,cmd) => {
 		if (program.quiet) {log.quiet()}
 		
-		input = readJsonBatch(input)	
+		input = path.resolve(input)
+
+		if (!cmd.manual) {
+			exportParams = readJsonBatch(input)	
+		} else {
+			if (!cmd.newLibrary) {log.error('Missing newLibrary option') ; process.exit(1)}
+			if (!cmd.currentLib) {log.error('Missing currentLib option') ; process.exit(1)}
+			if (!cmd.destination) {log.error('Missing destination option') ; process.exit(1)}
+
+			exportParams = {
+				newLib: cmd.newLibrary,
+				currentLib: cmd.currentLib,
+				destination: cmd.destination,
+				dbList: [{ref: input}]
+			}
+			if (typeof cmd.name === 'string') {exportParams.dbList[0].name = cmd.name}
+		}
 
 		require(path.resolve(__dirname,'export.js')).main(input)
 	})
