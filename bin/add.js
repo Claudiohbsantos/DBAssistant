@@ -29,12 +29,12 @@ add.main = function(input) {
 }
 
 add.exitRoutine = function() {
-	if (add.history) {
+	log.update.done()
+	if (add.history && add.logInfo.addedFiles > 0) {
 		add.history.createHeader(add.logInfo.addedFiles)
 		add.history.write()
+		log.info(`history file added to ${add.history.filePath}`)
 	}
-	log.update.done()
-	log.info(`history file added to ${add.history.filePath}`)
 	log.info(`DBAssistant is exiting`)
 }
 process.on('exit', add.exitRoutine );
