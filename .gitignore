@@ -1,4 +1,6 @@
 config.json
+bin\DBA_history\
+
 
 #VSCode Workspace
 .vscode

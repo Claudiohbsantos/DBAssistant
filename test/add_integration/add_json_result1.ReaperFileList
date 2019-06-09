@@ -1,0 +1,8 @@
+FILE "K:\Dev\ReaDB\Mock\Source\Metadata\Basehead_Metadata.wav" 148436 0 1496213732
+DATA "u:Super Custom Tag" "t:Track Title" "d:Description" "a:Artist" "b:CD Tile" "y:" "g:Genre" "c:"
+FILE "K:\Dev\ReaDB\Mock\Source\0026_bell riser.wav" 4752080 0 1545013321
+DATA "u:Super Custom Tag" "t:" "d:" "a:" "b:" "y:" "g:" "c:"
+FILE "K:\Dev\ReaDB\Mock\Lib\add_integration_test\Ixml_Fullspec.wav" 213940 0 1496213822
+DATA "u:My tag" "t:" "d:gSCENE=66agTAKE=002gTAPE=007gNOTE=Circle gUBITS=00000000" "a:" "b:ANewMovie" "y:2005:08:04" "g:" "c:claudio"
+FILE "K:\Dev\ReaDB\Mock\Lib\add_integration_test\Ixml_Fullspec.wav" 213940 0 1496213822
+DATA "u:My tag" "t:" "d:gSCENE=66agTAKE=002gTAPE=007gNOTE=Circle gUBITS=00000000" "a:" "b:ANewMovie" "y:2005:08:04" "g:" "c:claudio"

@@ -1,0 +1,15 @@
+{
+	"library" : "K:\\Dev\\ReaDB\\Mock\\Lib",
+	"user" : "claudio",
+	"shouldCopyToLib" : true,
+	"list" : 
+		[
+			{
+				"source": "K:\\Dev\\ReaDB\\Mock\\Source\\Metadata\\Ixml_Fullspec.wav",
+				"subdir": "add_integration_test",
+				"rename": "",
+				"usertag": "My tag",
+				"dbs": ["K:\\Dev\\ReaDB\\DBAssistant\\test\\add_integration\\add_json_db1.ReaperFileList", "K:\\Dev\\ReaDB\\DBAssistant\\test\\add_integration\\add_json_db2.ReaperFileList"]
+			}		
+		]	
+}

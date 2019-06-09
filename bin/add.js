@@ -16,9 +16,26 @@ add.logInfo = {addedFiles:0}
 let renamed = 0
 //////////////////////////////////////////////////
 
+add.quick = function(input) {
+	log.info('DBAssistant: (quick) Adding files to Databases')
+	log.info(`Database: ${input.db}`)
+	add.history = require(path.resolve(__dirname,'..','lib','history.js'))('cli',__dirname)
 
+	input.sources.forEach(source => {
+		let f = new add.file(source,() => {
+			let db = new add.reaperDB(input.db)
+			db.open()
+			db.add(f,input.usertag,'')
+		})
 
-add.main = function(input) {
+		add.history.log(f.path,[input.db])	
+		log.info(`added ${source}`)
+		add.logInfo.addedFiles++
+	})
+	log.info(`${add.logInfo.addedFiles} files added to database`)
+}
+
+add.complete = function(input) {
 	log.info('DBAssistant: Adding files to Databases')
 	add.history = require(path.resolve(__dirname,'..','lib','history.js'))(input.user,input.library)
 	
@@ -51,25 +68,26 @@ add.addSource = function(el,user,shouldCopyToLib) {
 	if (!fs.existsSync(el.source)) {
 		log.error(`${el.source} doesn't seem to exist`)
 	} else {
-	log.info(`Adding ${el.source} to ${el.dbs.length} databases`)
-	log.verbose(`Adding ${el.source} to ${el.dbs}`)
+		log.info(`Adding ${el.source} to ${el.dbs.length} databases`)
+		log.verbose(`Adding ${el.source} to ${el.dbs}`)
 
-	let cmdOrders = {
-					source         : el.source,
-					subdir         : el.subdir,
-					dbs            : el.dbs,
-					usertag        : el.usertag,
-					rename         : el.rename,
-					user           : user,
-					lib            : lib,
-					shouldCopyToLib: shouldCopyToLib
-					}
+		let cmdOrders = {
+						source         : el.source,
+						subdir         : el.subdir,
+						dbs            : el.dbs,
+						usertag        : el.usertag,
+						rename         : el.rename,
+						user           : user,
+						lib            : lib,
+						shouldCopyToLib: shouldCopyToLib
+						}
 
-	if (fs.lstatSync(el.source).isDirectory()) {
-		cmdOrders.rename = ''
-		walkPath(el.source,add.addFile,cmdOrders)
-	} else if (fs.lstatSync(el.source).isFile()) {
-		add.addFile(cmdOrders)
+		if (fs.lstatSync(el.source).isDirectory()) {
+			cmdOrders.rename = ''
+			walkPath(el.source,add.addFile,cmdOrders)
+		} else if (fs.lstatSync(el.source).isFile()) {
+			add.addFile(cmdOrders)
+		}
 	}
 }
 

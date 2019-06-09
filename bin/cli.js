@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const fs = require('fs');
+const fse = require('fs-extra')
 const program = require('commander');
 const path = require('path'); 
 
@@ -15,13 +16,30 @@ program
 program	
 	.command('add')
 	.description('Add files/folders to Reaper Databases')
-	.arguments('<JSON>')
+	.option('-m, --manual', 'Manual Mode. Uses other options to add files to DB from command line')
+	.option('-d, --database <string>','Database to add Sources to')
+	.option('-u, --usertag <string>','Custom user tag')
+	.arguments('<JSON|Sources...>')
 	.action((input,cmd) => {
 		if (program.quiet) {log.quiet()}
 
-		input = readJsonBatch(input)
+		if (!cmd.manual) {
+			let completeParams = readJsonBatch(path.resolve(input[0]))
+			require(path.resolve(__dirname,'add.js')).complete(completeParams)
+		} else {
+			if (!cmd.database) {log.error('missing --database option') ; process.exit(1)}
+			
+			let quickParams = {
+				db: path.resolve(cmd.database),
+				sources: []
+			}
+			if (typeof cmd.usertag === 'string') quickParams.usertag = cmd.usertag
+			input.forEach(source => {
+				quickParams.sources.push(path.resolve(source))
+			})
 
-		require(path.resolve(__dirname,'add.js')).main(input)
+			require(path.resolve(__dirname,'add.js')).quick(quickParams)
+		}
 	})
 
 program
