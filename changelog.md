@@ -1,3 +1,21 @@
+# DBAssistant v0.3.3
+
+## Bugs
+
+- Fixed error when adding files with missing certain metadata fields 
+
+## Features
+
+- Export command now extracts shortcut name from db file if it is not provided
+- Command line interfaces for add,deduplicate and export commands (use manual mode)
+- new templates command created json templates to control DBAssistant
+
+## Improvements
+
+- addition history is only created if there were succesful additions
+- DB files are created by add if nonexistant
+
+
 # DBAssistant v0.3.2
 
 ## IMPROVEMENTS
@@ -17,7 +35,8 @@
 
 ## IMPROVEMENTS
 
-  - DBAssistant doesn't depend on config.json anymore
-  - .ogg, .flac, .aif and .wv formats are now recognized
-  - Avoid newlines on verbose logging
-  - More steps are logged to file
+- DBAssistant doesn't depend on config.json anymore
+- .ogg, .flac, .aif and .wv formats are now recognized
+- Avoid newlines on verbose logging
+- More steps are logged to file
+  
