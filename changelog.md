@@ -8,7 +8,7 @@
 
 - Export command now extracts shortcut name from db file if it is not provided
 - Command line interfaces for add,deduplicate and export commands (use manual mode)
-- new templates command created json templates to control DBAssistant
+- new templates command creates json templates to control DBAssistant
 
 ## Improvements
 
