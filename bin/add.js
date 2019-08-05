@@ -218,9 +218,12 @@ add.reaperDB = class {
 	}
 
 	add(file,usertag,user) {
-		log.verbose(`adding ${file.path} to ${this.path}`)
-		log.verbose(`${this.dbEntry(file,usertag,user)}`)
-		if (this.stream) {this.stillWriting++ ; this.stream.write(this.dbEntry(file,usertag,user)+'\n',() => {this.stillWriting--})}
+		if (this.stream) {
+			log.verbose(`adding ${file.path} to ${this.path}`)
+			log.verbose(`${this.dbEntry(file,usertag,user)}`)
+			this.stillWriting++
+			this.stream.write(this.dbEntry(file,usertag,user)+'\n',() => {this.stillWriting--})
+		}
 	}
 
 	close() {
