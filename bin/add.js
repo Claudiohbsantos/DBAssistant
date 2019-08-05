@@ -182,17 +182,12 @@ add.library = class {
 	}
 
 	addFile(file,destPath,shouldCopyToLib) {
-		if (!this.isInLibrary(file) && shouldCopyToLib) {
+		if (shouldCopyToLib) {
 			log.verbose(`Copying ${file.path} to ${destPath}`)
 			// TODO Make async
 			fse.copySync(file.path,destPath)
 			file.path = destPath
 		}
-	}
-
-	isInLibrary(file) {
-		let isInLib = new RegExp('^' + escapeRegExp(this.path),'i')
-		return isInLib.test(file.path)
 	}
 
 	getDB(dbPath) {
