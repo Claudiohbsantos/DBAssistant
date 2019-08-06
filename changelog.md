@@ -1,3 +1,16 @@
+# DBAssistant v0.3.4
+
+## Bugs
+
+- properly notify of error when trying to create history file in inexistant Library path
+- forces failure when library path doesn't exist
+- fixed logging of currently addid file status to prevent false positive reports
+- fixed malformed destination paths for file copies
+
+## Improvements
+
+- Copies files regardless of whether they are inside the library path or noth, obeying only user option
+
 # DBAssistant v0.3.3
 
 ## Bugs

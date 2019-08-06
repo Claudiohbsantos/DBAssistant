@@ -1,6 +1,6 @@
 {
   "name": "dbassistant",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "",
   "main": ".\\bin\\cli.js",
   "bin": ".\\bin\\cli.js",
@@ -20,7 +20,8 @@
     "walk": "^2.3.14",
     "wavefile": "^8.4.4",
     "winston": "^3.2.1",
-    "xml2js": "^0.4.19"
+    "xml2js": "^0.4.19",
+    "lodash": ">=4.17.13"
   },
   "pkg": {
     "scripts": [
