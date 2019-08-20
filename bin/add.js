@@ -19,7 +19,7 @@ let renamed = 0
 add.quick = function(input) {
 	log.info('DBAssistant: (quick) Adding files to Databases')
 	log.info(`Database: ${input.db}`)
-	add.history = require(path.resolve(__dirname,'..','lib','history.js'))('cli',__dirname)
+	add.history = require(path.resolve(__dirname,'..','lib','history.js'))('cli',path.join(path.dirname(process.execPath),'history'))
 
 	input.sources.forEach(source => {
 		let f = new add.file(source,() => {
