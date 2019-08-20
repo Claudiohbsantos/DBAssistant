@@ -1,11 +1,11 @@
 {
   "name": "dbassistant",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "",
-  "main": ".\\bin\\cli.js",
-  "bin": ".\\bin\\cli.js",
+  "main": "./bin/cli.js",
+  "bin": "./bin/cli.js",
   "scripts": {
-    "build": "pkg --out-path ..\\release_dbassistant -t node10-win-x64 package.json && copy changelog.md ..\\release_dbassistant\\changelog.md"
+    "build": "pkg . --out-path ..\\release_dbassistant -t node10-win-x64,node10-macos-x64 && copy changelog.md ..\\release_dbassistant\\changelog.md && move ..\\release_dbassistant\\dbassistant-win.exe ..\\release_dbassistant\\dbassistant.exe && move ..\\release_dbassistant\\dbassistant-macos ..\\release_dbassistant\\dbassistant"
   },
   "author": "",
   "license": "ISC",
@@ -27,7 +27,8 @@
     "scripts": [
       "bin/*",
       "lib/*"
-    ]
+    ],
+    "assets": "templates/*" 
   },
   "devDependencies": {
     "chai": "^4.2.0",

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const fs = require('fs');
-const fse = require('fs-extra')
+// const fse = require('fs-extra')
 const program = require('commander');
 const path = require('path'); 
 
@@ -109,12 +109,18 @@ program
 		    fs.mkdirSync(templatesDir);
 		}
 
-		fse.copySync(path.resolve(__dirname,'..','templates','deduplicateTemplate.json'),path.join(templatesDir,'deduplicateTemplate.json'))
-		fse.copySync(path.resolve(__dirname,'..','templates','exportTemplate.json'),path.join(templatesDir,'exportTemplate.json'))
-		fse.copySync(path.resolve(__dirname,'..','templates','importTemplate.json'),path.join(templatesDir,'importTemplate.json'))
+		pkgCopy(path.resolve(__dirname,'..','templates','deduplicateTemplate.json'),path.join(templatesDir,'deduplicateTemplate.json'))
+		pkgCopy(path.resolve(__dirname,'..','templates','exportTemplate.json'),path.join(templatesDir,'exportTemplate.json'))
+		pkgCopy(path.resolve(__dirname,'..','templates','importTemplate.json'),path.join(templatesDir,'importTemplate.json'))
+		log.info('Templates generated on ./templates folder.')
 	})
 
 program.parse(process.argv)
+
+function pkgCopy(source,dest) {
+	const fileBuffer = fs.readFileSync(source)
+	fs.writeFileSync(dest,fileBuffer)
+}
 
 function readJsonBatch(file) {
 	if ( !/\.json/i.test(path.extname(file) )) {
