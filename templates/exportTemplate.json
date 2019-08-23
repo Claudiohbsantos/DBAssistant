@@ -2,6 +2,7 @@
 	"newLib": "path/to/new/media/library",
 	"currentLib": "path/to/current/library/referenced/in/dbfiles",
 	"destination": "path/to/exports/dbs/to",
+	"forceMacSlashes": "false",
 	"dbList" : [
 		{"name": "Reaper db" , "ref" : "path/to/db"},
 		{"name": "Another DB" , "ref" : "path/to/another/db"}

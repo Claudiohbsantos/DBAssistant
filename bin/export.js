@@ -20,7 +20,7 @@ x.main = function (input) {
     log.info(`remapping ${input.currentLib} to ${input.newLib}`)
     let dbmjson = []
     input.dbList.forEach((db) => {
-        let newRef = x.copyDBReplacingLib(db.ref,input.currentLib,input.newLib,input.destination)
+        let newRef = x.copyDBReplacingLib(db.ref,input.currentLib,input.newLib,input.destination,input.forceMacSlashes)
         let shortcutName = db.name ? db.name : path.parse(db.ref).name
         dbmjson.push({ name:shortcutName,ref:newRef})
     })
@@ -29,11 +29,11 @@ x.main = function (input) {
     log.info('Shortcuts file (.dbmjson) written to destination.')
 }
 
-x.copyDBReplacingLib = function(ref,curLib,newLib,dest) {
+x.copyDBReplacingLib = function(ref,curLib,newLib,dest,forceMacSlashes) {
     let db = fs.createReadStream(ref)
     db = byline.createStream(db,{ encoding: 'utf8' })
 
-    let rewrite = createRewriteTransformStream(curLib,newLib)
+    let rewrite = createRewriteTransformStream(curLib,newLib,forceMacSlashes)
 
     let destPath = getExportedDBPath(ref,dest)
     let newDB = fs.createWriteStream(destPath)
@@ -57,12 +57,18 @@ let getExportedDBPath = function(ref,dest) {
     return path.join(destDir,path.parse(ref).base)
 }
 
-let createRewriteTransformStream = function(curLib,newLib) {
+let createRewriteTransformStream = function(curLib,newLib,forceMacSlashes) {
     let rewrite = new stream.Transform({objectMode:true})
 
     rewrite._transform = function(line,encoding,done) {
         let r = new RegExp('^(FILE ")(' + escapeRegExp(curLib) + ')','i')
         let newLine = line.replace(r,'$1' + newLib) + EOL
+
+        if (forceMacSlashes) {
+            let pathSep = /(?<!\\)\\(?!\\)/g
+            newLine = newLine.replace(pathSep,'/')
+        }
+        
         this.push(newLine)
         done()
     }
