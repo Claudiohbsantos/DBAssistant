@@ -1,3 +1,13 @@
+# DBAssistant v0.3.6
+
+- option to convert backslashes (win) to forward slashes (cross-compatible) on export
+
+# DBAssistant v0.3.5
+
+## Bugs
+
+- fixed inclusion of templates
+
 # DBAssistant v0.3.4
 
 ## Bugs
