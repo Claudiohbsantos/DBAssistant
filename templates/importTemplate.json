@@ -2,6 +2,7 @@
 	"library" : "path/to/media/library",
 	"user" : "userName",
 	"shouldCopyToLib" : true,
+	"ignoreExistingFiles" : false, 
 	"list" : 
 		[
 			{

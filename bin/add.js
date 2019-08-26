@@ -41,7 +41,7 @@ add.complete = function(input) {
 	
 	lib = new add.library(input.library)
 	input.list.forEach(el => {
-		add.addSource(el,input.user,input.shouldCopyToLib)
+		add.addSource(el,input.user,input.shouldCopyToLib,input.ignoreExistingFiles)
 	})
 }
 
@@ -62,7 +62,7 @@ let escapeRegExp = function(text) {
   return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
 }
 
-add.addSource = function(el,user,shouldCopyToLib) {
+add.addSource = function(el,user,shouldCopyToLib,ignoreExistingFiles) {
 	log.update.clear()
 
 	if (!fs.existsSync(el.source)) {
@@ -79,7 +79,8 @@ add.addSource = function(el,user,shouldCopyToLib) {
 						rename         : el.rename,
 						user           : user,
 						lib            : lib,
-						shouldCopyToLib: shouldCopyToLib
+						shouldCopyToLib: shouldCopyToLib,
+						ignoreExistingFiles: ignoreExistingFiles
 						}
 
 		if (fs.lstatSync(el.source).isDirectory()) {
@@ -136,7 +137,7 @@ function getDestPath(cmd) {
 	destPath = path.join(cmd.lib.path,folder, base)
 
 
-	if (!nonEmpty.test(cmd.subdir)) {destPath = getUniquePath(destPath)} 
+	if (!cmd.ignoreExistingFiles || !nonEmpty.test(cmd.subdir)) {destPath = getUniquePath(destPath)} 
 	
 	return destPath
 }
