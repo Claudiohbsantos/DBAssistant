@@ -15,7 +15,7 @@
     "fs-extra": "^7.0.1",
     "log-update": "^2.3.0",
     "music-metadata": "^4.0.1",
-    "npm": "^6.5.0",
+    "npm": "^6.14.6",
     "save": "^2.3.3",
     "walk": "^2.3.14",
     "wavefile": "^8.4.4",
